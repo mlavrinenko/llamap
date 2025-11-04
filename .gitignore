@@ -1,0 +1,6 @@
+/.devenv
+/.direnv
+/var
+/target
+.devenv.flake.nix
+.pre-commit-config.yaml

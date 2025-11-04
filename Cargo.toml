@@ -1,0 +1,85 @@
+[package]
+name = "llamap"
+description = "CLI tool to build llms.txt from sitemap.xml"
+version = "0.1.0"
+edition = "2024"
+license = "MIT"
+repository = "https://github.com/mlavrinenko/llamap"
+categories = ["command-line-utilities", "web-programming::http-client", "text-processing", "science", "parsing"]
+keywords = ["cli", "sitemap", "llms-txt", "summary", "converter"]
+
+[[bin]]
+bench = false
+path = "src/main.rs"
+name = "llamap"
+
+[dependencies]
+anyhow = "1.0.99"
+chrono = "0.4.38"
+clap = { version = "4.5.47", features = ["derive"] }
+dom_smoothie = "0.13.0"
+env_logger = "0.11.8"
+fast_html2md = { version = "0.0.48", features = ["scraper"] }
+llm = "1.3.4"
+log = "0.4.28"
+once_cell = "1.21.3"
+rate-guard = { version = "0.1.0", features = ["std-time"] }
+regex = "1.11.1"
+reqwest = { version = "0.12.9", features = ["json"] }
+rusqlite = { version = "0.37.0", features = ["bundled"] }
+scraper = "0.24.0"
+serde_json = "1.0.138"
+sitemap = "0.4.1"
+spider = { version = "2.37.159", default-features = false, features = ["sitemap", "sync", "balance", "fs"] }
+tokio = { version = "1.47.1", features = ["full"] }
+url = "2.5.4"
+
+[dev-dependencies]
+spectral = "0.6.0"
+
+[lints.clippy]
+no_effect = "deny"
+redundant_closure_call = "deny"
+redundant_closure = "deny"
+neg_multiply = "deny"
+approx_constant = "deny"
+useless_let_if_seq = "deny"
+single_match = "deny"
+single_match_else = "deny"
+match_wild_err_arm = "deny"
+match_overlapping_arm = "deny"
+deprecated_cfg_attr = "deny"
+unseparated_literal_suffix = "deny"
+redundant_pattern = "deny"
+redundant_static_lifetimes = "deny"
+redundant_field_names = "deny"
+out_of_bounds_indexing = "deny"
+useless_vec = "deny"
+unused_unit = "deny"
+unused_self = "deny"
+similar_names = "deny"
+too_many_arguments = "deny"
+struct_excessive_bools = "deny"
+cognitive_complexity = "deny"
+missing_errors_doc = "deny"
+missing_panics_doc = "deny"
+trivially_copy_pass_by_ref = "deny"
+large_enum_variant = "deny"
+wildcard_imports = "deny"
+module_inception = "deny"
+upper_case_acronyms = "deny"
+too_many_lines = "deny"
+new_without_default = "deny"
+should_implement_trait = "deny"
+type_complexity = "deny"
+many_single_char_names = "deny"
+unnecessary_wraps = "deny"
+indexing_slicing = "deny"
+unwrap_used = "deny"
+todo = "deny"
+panic_in_result_fn = "deny"
+unimplemented = "deny"
+unreachable = "deny"
+if_same_then_else = "deny"
+iter_out_of_bounds = "deny"
+mem_forget = "deny"
