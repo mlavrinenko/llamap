@@ -33,7 +33,7 @@ pub async fn compose(db_path: &str, output_path: &str, source: super::ComposeSou
 
     info!("Composing pages from database {db_path} to {output_path}...");
 
-    let urls = storage.list_urls()?;
+    let urls = storage.list_composable_urls()?;
 
     let mut processed_count = 0;
     let mut file = OpenOptions::new()

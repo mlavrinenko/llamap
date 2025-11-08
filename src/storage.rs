@@ -88,6 +88,34 @@ impl Storage {
         urls.map_err(|e| e.into())
     }
 
+    /// Returns a list of all URLs stored in the database that have either parsed text or summary content.
+    ///
+    /// # Returns
+    ///
+    /// Returns a vector of URL strings on success, or an error if database operation fails
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if database operation fails
+    ///
+    /// # Panics
+    ///
+    /// Panics if the mutex is poisoned
+    pub fn list_composable_urls(&self) -> Result<Vec<String>> {
+        let conn = self.conn.lock().expect("Storage mutex poisoned");
+        let mut stmt = conn.prepare(
+            "
+                SELECT url FROM pages
+                WHERE (text is not NULL and text != '')
+                   or (summary is not NULL and summary != '')
+            ",
+        )?;
+        let urls: Result<Vec<String>, rusqlite::Error> =
+            stmt.query_map([], |row| row.get(0))?.collect();
+
+        urls.map_err(|e| e.into())
+    }
+
     /// Gets the content for a specific URL from the database.
     ///
     /// # Arguments
@@ -331,7 +359,11 @@ impl Storage {
     /// # Panics
     ///
     /// Panics if the mutex is poisoned
-    pub fn fetch_summarizable_pages(&self, limit: u32, offset: u32) -> Result<Vec<(String, String)>> {
+    pub fn fetch_summarizable_pages(
+        &self,
+        limit: u32,
+        offset: u32,
+    ) -> Result<Vec<(String, String)>> {
         let conn = self.conn.lock().expect("Storage mutex poisoned");
         let mut stmt = conn.prepare(
             "
