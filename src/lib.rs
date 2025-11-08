@@ -76,6 +76,18 @@ impl From<&str> for ParseTarget {
     }
 }
 
+/// Enum representing the source for composing content.
+#[derive(Clone, PartialEq, Eq, Debug, Default, clap::ValueEnum)]
+pub enum ComposeSource {
+    /// Use text only
+    Text,
+    /// Use summary only
+    Summary,
+    /// Use summary if available, otherwise use text
+    #[default]
+    Best,
+}
+
 pub use compose::compose;
 pub use parse::{extract_article, parse_db_html};
 pub use scrape::process_sitemap;

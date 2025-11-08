@@ -19,8 +19,9 @@ use std::str::FromStr;
 use url::Url;
 
 use llamap::{
-    ParseTarget, SummarizeTarget, TextBy, compose::compose, constants::MODEL_API_KEY_ENV_NAME,
-    parse::parse_db_html, scrape::process_sitemap, summarize::summarize,
+    ParseTarget, ComposeSource, SummarizeTarget, TextBy, compose::compose,
+    constants::MODEL_API_KEY_ENV_NAME, parse::parse_db_html, scrape::process_sitemap,
+    summarize::summarize,
 };
 use scraper::Selector as ScraperSelector;
 
@@ -87,6 +88,9 @@ enum Command {
         db: String,
         /// Path to output file to compose results to
         output_file: String,
+        /// Source to compose from: "text", "summary", or "best" (default)
+        #[arg(long, value_enum, default_value_t = ComposeSource::Best)]
+        source: ComposeSource,
     },
 }
 
@@ -132,7 +136,11 @@ async fn main() -> Result<()> {
             target,
             rpm,
         } => handle_summarize_command(db, model, prompt_file, target, rpm).await,
-        Command::Compose { db, output_file } => compose(&db, &output_file).await,
+        Command::Compose {
+            db,
+            output_file,
+            source,
+        } => compose(&db, &output_file, source).await,
     }
 }
 
