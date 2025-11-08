@@ -141,7 +141,7 @@ async fn summarize_all_pages(ctx: &SummarizeContext<'_>, storage: &Storage) -> R
             return Ok(Vec::new());
         }
 
-        let batch = storage.fetch_pages(FETCH_BATCH_SIZE, *offset.borrow())?;
+        let batch = storage.fetch_summarizable_pages(FETCH_BATCH_SIZE, *offset.borrow())?;
         let batch_size = batch.len();
         *offset.borrow_mut() += FETCH_BATCH_SIZE;
         if batch_size < FETCH_BATCH_SIZE as usize {

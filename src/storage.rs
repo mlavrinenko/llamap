@@ -297,7 +297,13 @@ impl Storage {
     pub fn fetch_unsummarized_pages(&self, limit: u32) -> Result<Vec<(String, String)>> {
         let conn = self.conn.lock().expect("Storage mutex poisoned");
         let mut stmt = conn.prepare(
-            "SELECT url, text FROM pages WHERE summary IS NULL OR summary = '' ORDER BY added_at ASC LIMIT ?1",
+            "
+                SELECT url, text FROM pages
+                WHERE text is not NULL and text != ''
+                  and (summary is NULL or summary = '')
+                ORDER BY added_at ASC
+                LIMIT ?1
+            ",
         )?;
         let rows = stmt.query_map([limit], |row| Ok((row.get(0)?, row.get(1)?)))?;
         let pages: Vec<(String, String)> = rows.flatten().collect();
@@ -305,9 +311,8 @@ impl Storage {
         Ok(pages)
     }
 
-    /// Gets a limited number of all pages from the database with an offset.
-    /// This helps manage memory usage when dealing with large databases
-    /// and allows processing all records in batches.
+    /// Gets a limited number of all pages that can be summarized from the
+    /// database with an offset.
     ///
     /// # Arguments
     ///
@@ -326,10 +331,16 @@ impl Storage {
     /// # Panics
     ///
     /// Panics if the mutex is poisoned
-    pub fn fetch_pages(&self, limit: u32, offset: u32) -> Result<Vec<(String, String)>> {
+    pub fn fetch_summarizable_pages(&self, limit: u32, offset: u32) -> Result<Vec<(String, String)>> {
         let conn = self.conn.lock().expect("Storage mutex poisoned");
-        let mut stmt =
-            conn.prepare("SELECT url, text FROM pages ORDER BY added_at ASC LIMIT ?1 OFFSET ?2")?;
+        let mut stmt = conn.prepare(
+            "
+                SELECT url, text FROM pages
+                WHERE text is not NULL and text != ''
+                ORDER BY added_at ASC
+                LIMIT ?1 OFFSET ?2
+            ",
+        )?;
         let rows = stmt.query_map([limit, offset], |row| Ok((row.get(0)?, row.get(1)?)))?;
         let pages: Vec<(String, String)> = rows.flatten().collect();
 
